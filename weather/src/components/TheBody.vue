@@ -1,55 +1,66 @@
 <script setup lang="ts">
 import BodyItem from './BodyItem.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-import EcosystemIcon from './icons/IconEcosystem.vue'
+import IconThermometer from './icons/IconThermometer.vue'
+import IconCloud from './icons/IconCloud.vue'
+import IconDrop from './icons/IconDrop.vue'
+import IconDropMeasure from './icons/IconDropMeasure.vue'
 </script>
 
 <template>
   <BodyItem>
     <template #icon>
-      <DocumentationIcon />
+      <IconThermometer />
     </template>
     <template #heading>Temperatura Interna</template>
-
-    Vue’s
-    <a href="https://vuejs.org/" target="_blank" rel="noopener">official documentation</a>
-    provides you with all information you need to get started.
+    La temperatura en la habitación es: <h2 class="m-2">??? ºC</h2>
   </BodyItem>
 
   <BodyItem>
     <template #icon>
-      <ToolingIcon />
+      <IconCloud />
     </template>
     <template #heading>Temperatura Externa</template>
-
-    This project is served and bundled with
-    <a href="https://vitejs.dev/guide/features.html" target="_blank" rel="noopener">Vite</a>. The
-    recommended IDE setup is
-    <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VSCode</a> +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank" rel="noopener">Volar</a>. If
-    you need to test your components and web pages, check out
-    <a href="https://www.cypress.io/" target="_blank" rel="noopener">Cypress</a> and
-    <a href="https://on.cypress.io/component" target="_blank">Cypress Component Testing</a>.
-
-    <br />
-
-    More instructions are available in <code>README.md</code>.
+    La temperatura en el exterior es: <h2 class="m-2">{{temp}} ºC</h2>
   </BodyItem>
 
   <BodyItem>
     <template #icon>
-      <EcosystemIcon />
+      <IconDropMeasure />
     </template>
-    <template #heading>Humedad</template>
+    <template #heading>Humedad Interna</template>
+    La humedad en la habitación es: <h2 class="m-2">??? %</h2>
+  </BodyItem>
 
-    Get official tools and libraries for your project:
-    <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">Pinia</a>,
-    <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>,
-    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a>, and
-    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>. If
-    you need more resources, we suggest paying
-    <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">Awesome Vue</a>
-    a visit.
+  <BodyItem>
+    <template #icon>
+      <IconDrop />
+    </template>
+    <template #heading>Humedad Externa</template>
+    La humedad en el exterior es: <h2 class="m-2">{{humedad}} %</h2>
   </BodyItem>
 </template>
+<script lang="ts">
+import axios from 'axios'
+import type { IWeatherResponse } from '../interfaces/IWeatherResponse'
+
+export default {
+  data() {
+    return {
+      temp: '-',
+      humedad: '-'
+    }
+  },
+  mounted() {
+    axios
+      .get<IWeatherResponse>(`https://api.openweathermap.org/data/2.5/weather?lat=39.16045525833788&lon=-3.0176301597631534&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
+      .then((response) => {
+        if (response?.data){
+          const celsius = response.data.main.temp - 273.15;
+          const humedad = response.data.main.humidity;
+          this.temp = Number(celsius).toFixed(2);
+          this.humedad = Number(humedad).toFixed(2);
+        }
+      })
+  }
+}
+</script>
