@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>55f647eb-d453-4cc5-b741-e9ccc137f28d</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+	<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
+	  
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+</Project>
