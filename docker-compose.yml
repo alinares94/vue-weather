@@ -1,6 +1,6 @@
 version: "3.4"
 
-name: mysql
+name: weather
 services:
   db:
     image: mysql:latest
@@ -17,9 +17,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
   weatherapi:
+     environment:
+       - ASPNETCORE_ENVIRONMENT=Release
      depends_on:
        - db
-     image: weatherapi
+     image: weather-api
      build:
        context: .
      ports:
