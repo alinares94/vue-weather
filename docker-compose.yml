@@ -11,7 +11,7 @@ services:
       MYSQL_PASSWORD: 'Alinares94$$'
       MYSQL_ROOT_PASSWORD: 'Alinares94$$'
     ports:
-      - '3306:3306'
+      - '3307:3306'
     expose:
       - '3306'
     volumes:

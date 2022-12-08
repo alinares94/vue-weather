@@ -1,6 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using weather.API.DataBase;
+using weather.API.DTO;
 
 namespace weather.API.Controllers;
 [ApiController]
@@ -8,42 +10,32 @@ namespace weather.API.Controllers;
 public class WeatherController : ControllerBase
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public WeatherController(DataContext context)
+    public WeatherController(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<ActionResult<Measure>> Get()
+    public async Task<ActionResult<MeasureDto>> Get()
     {
-        await AddHist();
-        return Ok(await _context.Measures!.OrderByDescending(x => x.Id).FirstOrDefaultAsync());
+        var ef = await _context.Measures!.OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+        return Ok(_mapper.Map<MeasureDto>(ef));
     }
 
-    private async Task AddHist()
+    [HttpPost]
+    public async Task<ActionResult<bool>> Post(MeasureDto dto)
     {
-        var measures = await _context.Measures!.ToListAsync();
-        var dates = measures.Select(x => x.Date.Date).Distinct();
-        if (dates.Count() <= 1)
-            return;
+        _context.Measures!.Add(_mapper.Map<Measure>(dto));
+        return Ok(await _context.SaveChangesAsync() > 0);
+    }
 
-        var oldMeasures = measures.Where(x => x.Date.Date == dates.Min());
-        var minTemp = oldMeasures.Min(x => x.Temperature);
-        var maxTemp = oldMeasures.Max(x => x.Temperature);
-        var minHum = oldMeasures.Min(x => x.Humidity);
-        var maxHum = oldMeasures.Max(x => x.Humidity);
-
-        _context.Measures!.RemoveRange(oldMeasures);
-        _context.HistMeasures!.Add(new()
-        {
-            Date = dates.Min(),
-            MaxTemperature = maxTemp,
-            MinTemperature = minTemp,
-            MaxHumidity = maxHum,
-            MinHumidity = minHum,
-        });
-
-        await _context.SaveChangesAsync();
+    [HttpPut]
+    public async Task<ActionResult<bool>> Put(MeasureDto dto)
+    {
+        _context.Measures!.Update(_mapper.Map<Measure>(dto));
+        return Ok(await _context.SaveChangesAsync() > 0);
     }
 }

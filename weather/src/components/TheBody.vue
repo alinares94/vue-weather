@@ -12,7 +12,7 @@ import IconDropMeasure from './icons/IconDropMeasure.vue'
       <IconThermometer />
     </template>
     <template #heading>Temperatura Interna</template>
-    La temperatura en la habitación es: <h2 class="m-2">??? ºC</h2>
+    La temperatura en la habitación es: <h2 class="m-2">{{tempMeasure}} ºC</h2>
   </BodyItem>
 
   <BodyItem>
@@ -28,7 +28,7 @@ import IconDropMeasure from './icons/IconDropMeasure.vue'
       <IconDropMeasure />
     </template>
     <template #heading>Humedad Interna</template>
-    La humedad en la habitación es: <h2 class="m-2">??? %</h2>
+    La humedad en la habitación es: <h2 class="m-2">{{humedadMeasure}} %</h2>
   </BodyItem>
 
   <BodyItem>
@@ -42,12 +42,15 @@ import IconDropMeasure from './icons/IconDropMeasure.vue'
 <script lang="ts">
 import axios from 'axios'
 import type { IWeatherResponse } from '../interfaces/IWeatherResponse'
+import type { IMeasureResponse } from '../interfaces/IMeasureResponse';
 
 export default {
   data() {
     return {
       temp: '-',
-      humedad: '-'
+      humedad: '-',
+      tempMeasure: '-',
+      humedadMeasure: '-',
     }
   },
   mounted() {
@@ -60,7 +63,17 @@ export default {
           this.temp = Number(celsius).toFixed(2);
           this.humedad = Number(humedad).toFixed(2);
         }
-      })
+      });
+    axios
+      .get<IMeasureResponse>(`${import.meta.env.VITE_MEASURES_API}`)
+      .then((response) => {
+        if (response?.data){
+          const celsius = response.data.temperature;
+          const humedad = response.data.humidity;
+          this.tempMeasure = Number(celsius).toFixed(2);
+          this.humedadMeasure = Number(humedad).toFixed(2);
+        }
+      });
   }
 }
 </script>
